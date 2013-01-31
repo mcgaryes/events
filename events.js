@@ -1,21 +1,30 @@
-/**
- * @main Events
- */
 (function() {
 
 	"use strict";
 
+	/**
+	 * Reference to 'window'
+	 * @property root
+	 * @type Object
+	 * @private
+	 */
 	var root = this;
 
+	/**
+	 * @main Events
+	 */
 	root.Events = {
 
 		/**
+		 * Holds all references to event types, callbacks, contexts and configurations.
 		 * @property _eventMap
 		 * @type Object
+		 * @private
 		 */
 		_eventMap: undefined,
 
 		/**
+		 * Checks to see if an event is registered to this object with the passed type.
 		 * @method has
 		 * @param {String} type
 		 */
@@ -27,6 +36,7 @@
 		},
 
 		/**
+		 * Removes an event to the object.
 		 * @method off
 		 * @param {String} type
 		 * @param {Function} callback
@@ -59,6 +69,7 @@
 		},
 
 		/**
+		 * Attaches an event to the object.
 		 * @method on
 		 * @param {String} type
 		 * @param {Function} callback
@@ -80,10 +91,10 @@
 				context: context,
 				configurable: configurable
 			});
-
 		},
 
 		/**
+		 * Removes an event from the object.
 		 * @method off
 		 * @param {String} type
 		 * @param {Function} callback
@@ -93,8 +104,12 @@
 				return;
 			}
 			this._eventMap[type].forEach(function(item) {
-				item.callback.call(item.context);
-			});
+				item.callback.call(item.context,{
+					type:type,
+					target:this,
+					isConfigurable:item.configurable
+				});
+			},this);
 		}
 	};
 

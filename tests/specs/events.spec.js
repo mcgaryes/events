@@ -34,6 +34,14 @@ describe("events", function() {
 		item.off("customEvent",test);
 		expect(item._eventMap.customEvent.length).toEqual(0);
 	});
+
+	it("using 'off' inside an event callback works",function(){
+		item.on("customEvent",function(e){
+			e.target.off(e.type);
+		});
+		item.trigger("customEvent");
+		expect(item._eventMap.customEvent.length).toEqual(0);
+	});
 	
 	it("with 'configurable' set to false do not get removed",function(){
 		item.on("customEvent",test,this,false);
