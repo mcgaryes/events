@@ -41,4 +41,9 @@ describe("events", function() {
 		expect(item._eventMap.customEvent.length).toEqual(1);
 	});
 
+	it("present are returned by 'has'",function(){
+		item.on("customEvent",null);
+		expect(item.has("customEvent")).toBeTruthy();
+	});
+
 });

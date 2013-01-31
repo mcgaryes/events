@@ -16,28 +16,14 @@
 		_eventMap: undefined,
 
 		/**
-		 * @method on
+		 * @method has
 		 * @param {String} type
-		 * @param {Function} callback
-		 * @param {Object} context
-		 * @param {Boolean} configurable Whether or not you should be able to remove this listener without passing its callback reference
 		 */
-		on: function(type, callback, context, configurable) {
-			if(this._eventMap === undefined) {
-				this._eventMap = {};
+		has:function(type) {
+			if(this._eventMap === undefined || this._eventMap[type] === undefined) {
+				return false;
 			}
-			if(this._eventMap[type] === undefined) {
-				this._eventMap[type] = [];
-			}
-			if(configurable === undefined) {
-				configurable = true;
-			}
-			this._eventMap[type].push({
-				callback: callback,
-				context: context,
-				configurable: configurable
-			});
-
+			return true;
 		},
 
 		/**
@@ -70,6 +56,31 @@
 				// are not configurable
 				this._eventMap = {};
 			}
+		},
+
+		/**
+		 * @method on
+		 * @param {String} type
+		 * @param {Function} callback
+		 * @param {Object} context
+		 * @param {Boolean} configurable Whether or not you should be able to remove this listener without passing its callback reference
+		 */
+		on: function(type, callback, context, configurable) {
+			if(this._eventMap === undefined) {
+				this._eventMap = {};
+			}
+			if(this._eventMap[type] === undefined) {
+				this._eventMap[type] = [];
+			}
+			if(configurable === undefined) {
+				configurable = true;
+			}
+			this._eventMap[type].push({
+				callback: callback,
+				context: context,
+				configurable: configurable
+			});
+
 		},
 
 		/**
