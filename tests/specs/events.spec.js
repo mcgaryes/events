@@ -33,6 +33,8 @@ describe("events", function() {
 		item.on("customEvent",test);
 		item.off("customEvent",test);
 		expect(item._eventMap.customEvent.length).toEqual(0);
+		item.off();
+		item.on("customEvent",test);
 	});
 
 	it("using 'off' inside an event callback works",function(){

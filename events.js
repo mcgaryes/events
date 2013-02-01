@@ -27,9 +27,10 @@
 		 * Checks to see if an event is registered to this object with the passed type.
 		 * @method has
 		 * @param {String} type
+		 * @param {String} type
 		 */
-		has:function(type) {
-			if(this._eventMap === undefined || this._eventMap[type] === undefined) {
+		has: function(type, callbackRef) {
+			if(type === undefined || this._eventMap === undefined || this._eventMap[type] === undefined) {
 				return false;
 			}
 			return true;
@@ -42,29 +43,21 @@
 		 * @param {Function} callback
 		 */
 		off: function(type, callbackRef) {
-			if(this._eventMap === undefined || this._eventMap[type] === undefined) {
-				return;
-			}
-			if(type) {
-				if(callbackRef) {
-					var tempArr = [];
-					this._eventMap[type].forEach(function(item, index) {
+			if(this.has(type)) {
+				for(var i = 0; i < this._eventMap[type].length; i++) {
+					var item = this._eventMap[type][i];
+					if(callbackRef) {
 						if(item.callback === callbackRef) {
-							this._eventMap[type] = this._eventMap[type].splice(index, 0);
+							this._eventMap[type] = this._eventMap[type].splice(i, 0);
 						}
-					}, this);
-				} else {
-					this._eventMap[type].forEach(function(item, index) {
+					} else {
 						if(item.configurable === true) {
-							this._eventMap[type] = this._eventMap[type].splice(index, 0);
+							this._eventMap[type] = this._eventMap[type].splice(i, 0);
 						}
-					}, this);
+					}
 				}
 			} else {
-				// @TODO: need to come up with a way to look through all of the objects
-				// props as well as any events on the object and then delete only those that
-				// are not configurable
-				this._eventMap = {};
+				delete this._eventMap;
 			}
 		},
 
@@ -100,16 +93,19 @@
 		 * @param {Function} callback
 		 */
 		trigger: function(type) {
-			if(this._eventMap === undefined || this._eventMap[type] === undefined) {
+			if(!this.has(type)) {
 				return;
 			}
-			this._eventMap[type].forEach(function(item) {
-				item.callback.call(item.context,{
-					type:type,
-					target:this,
-					isConfigurable:item.configurable
-				});
-			},this);
+			for(var i = 0; i < this._eventMap[type].length; i++) {
+				var item = this._eventMap[type][i];
+				if(item.callback !== null) {
+					item.callback.call(item.context, {
+						type: type,
+						target: this,
+						isConfigurable: item.configurable
+					});
+				}
+			}
 		}
 	};
 
